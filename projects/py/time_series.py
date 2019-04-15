@@ -155,3 +155,13 @@ def sample_timeseries(x_grid, pdf_grid, psd, n_sample, dt_sec=180., gen=None):
     x_cdf = 0.5 * (1 + scipy.special.erf(x / np.sqrt(2)))
     return np.interp(x_cdf, cdf_grid, x_grid)
 
+
+#-- sampling example using DESI seeing
+#- generate a distribution 
+def norm_model(x):
+    p = np.array([1.,1.]) #- Gaussian parm for mean=1, std=1.
+    y = norm.pdf(x,p[0],p[1])
+    return y / (y.sum() * np.gradient(x))
+
+
+
