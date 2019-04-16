@@ -163,5 +163,12 @@ def norm_model(x):
     y = norm.pdf(x,p[0],p[1])
     return y / (y.sum() * np.gradient(x))
 
+def psd_func(freq,N,f0,a0,a1):    #- piecewise power law model
+    return (N * (freq/f0)**a0 / (1 + (freq/f0)**a0) * ((freq/f0) ** a1) / (1 + (freq/f0) ** a1))
 
+def fit_psd(freq,psd):
+    #N, f0, a0, a1 = 8000, 0.10, 2.8, -1.1
+    from scipy.optimize import curve_fit
+    popt,pcov=curve_fit(psd_func,freq,psd)
+    return popt,pcov
 
