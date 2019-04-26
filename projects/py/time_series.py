@@ -155,6 +155,27 @@ def sample_timeseries(x_grid, pdf_grid, psd, n_sample, dt_sec=180., gen=None):
     x_cdf = 0.5 * (1 + scipy.special.erf(x / np.sqrt(2)))
     return np.interp(x_cdf, cdf_grid, x_grid)
 
+def _fit_model_pdf(newx,hist):
+    xx=(hist[1][1:]+hist[1][:-1])/2 #- bin centers
+    yy=np.interp(newx,xx,hist[0])
+    return yy/(yy.sum() * np.gradient(newx))
+
+def get_pdf(hist,median_val,max_val,n):
+    #- tabulate the nominal (scale=1) pdf
+    vals=np.linspace(0.,max_val,n)
+    pdf=_fit_model_pdf(vals,hist)
+    pdf/=pdf.sum()*np.gradient(vals))
+    cdf=np.cumsum(pdf)
+    cdf/=cdf[-1]
+    #- tabulate the median as a function of val scale
+    scale=np.linspace(0.9,1.4,11)
+    median=np.empty_like(scale)
+    for i,s in enumerate(scale):
+        median[i]=np.interp(0.5,cdf,s*vals)
+    if median_val < median[0] or median_val>median[-1]:
+        raise ValueError("Requested median is outside allowed range")
+    s=np.interp(median_val,median,scale)
+    return vals * s, pdf/s
 
 #-- sampling example using DESI seeing
 #- generate a distribution 
