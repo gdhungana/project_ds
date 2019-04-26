@@ -177,6 +177,11 @@ def get_pdf(hist,median_val,max_val,n):
     s=np.interp(median_val,median,scale)
     return vals * s, pdf/s
 
+def get_psd(xx,yy,freq):
+    from scipy import signal
+    return signal.lombscargle(xx,yy,freq)
+
+
 #-- sampling example using DESI seeing
 #- generate a distribution 
 def norm_model(x):
