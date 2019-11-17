@@ -32,5 +32,15 @@ def looped_nn_calc(n_layers, x, w, b):
             f_sum += b[l][i]
             #finally use the activation function to calculate the
             #i-th output i.e. h1, h2, h3
-            h[i] = f(f_sum)
+            h[i] = activation_fn(f_sum)
+    return h
+
+def matrix_feed_forward_calc(n_layers, x, w, b): #- vectorized
+    for l in range(n_layers-1):
+        if l == 0:
+            node_in = x
+        else:
+            node_in = h
+        z = w[l].dot(node_in) + b[l]
+        h = activation_fn(z)
     return h
