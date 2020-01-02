@@ -81,4 +81,11 @@ def evaluate_model(model,XX_test,yy_test,round=False):
     print("Cohen Kappa: ", cohen_kappa_score(yy_test, y_pred))
     return
 
+def run_process_binary():
+    wines=get_data()
+    X_train, X_test, y_train, y_test = train_test_data(wines)
+    mod=deep_learning_model_inst(inshape=12)
+    modd=fit_model(mod,X_train,y_train,epochs=5)
+    evaluate_model(modd,X_test,y_test,round=True)
+
 
