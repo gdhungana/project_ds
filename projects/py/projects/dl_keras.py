@@ -29,4 +29,36 @@ def get_data(corr=False):
     return wines
 
 
+def train_test_data(dataDF):
+    # Specify the data 
+    X=dataDF.ix[:,0:-1]
+    # Specify the target labels and flatten the array 
+    y=np.ravel(dataDF.ix[:,-1])
+    # Split the data up in train and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=123)
+    #- scale/normalization
+    # Define the scaler 
+    scaler = StandardScaler().fit(X_train)
+    # Scale the train set
+    X_train = scaler.transform(X_train)
+    # Scale the test set
+    X_test = scaler.transform(X_test)
+
+    return X_train,X_test,y_train,y_test
+
+def deep_learning_model_inst(inshape=11,hidshape=8):
+
+    # Initialize the constructor
+    model = Sequential()
+
+    # Add an input layer 
+    model.add(Dense(12, activation='relu', input_shape=(inshape,)))
+
+    # Add one hidden layer 
+    model.add(Dense(hidshape, activation='relu'))
+
+    # Add an output layer 
+    model.add(Dense(1, activation='sigmoid'))
+    return model
+
 
