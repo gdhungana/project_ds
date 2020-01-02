@@ -61,4 +61,24 @@ def deep_learning_model_inst(inshape=11,hidshape=8):
     model.add(Dense(1, activation='sigmoid'))
     return model
 
+def fit_model(model,XX_train,yy_train,epochs=5,loss='binary_crossentropy',optimizer='adam',metrics=['accuracy']):
+    model.compile(loss=loss,optimizer=optimizer,metrics=metrics)
+    model.fit(XX_train,yy_train,epochs=epochs,batch_size=1,verbose=1)
+    return model
+
+
+def evaluate_model(model,XX_test,yy_test,round=False):
+    y_pred = model.predict(XX_test)
+    if round:
+       y_pred=np.round(y_pred)
+    score=model.evaluate(XX_test,yy_test,verbose=1)
+    print(score)
+    from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score
+    print("Confusion Matrix: ", confusion_matrix(yy_test, y_pred))
+    print("Precision: ",precision_score(yy_test,y_pred))
+    print("Recall: ",recall_score(yy_test,y_pred))
+    print("F1 Score: ", f1_score(yy_test,y_pred))
+    print("Cohen Kappa: ", cohen_kappa_score(yy_test, y_pred))
+    return
+
 
