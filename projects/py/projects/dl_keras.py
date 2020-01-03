@@ -89,3 +89,46 @@ def run_process_binary():
     evaluate_model(modd,X_test,y_test,round=True)
 
 
+def run_process_regression(kfold=False,hidden_units=64,input_dim=12,optimizer='rmsprop',loss='mse',metrics=['mae']):
+    #- use quality as the target
+    wines=get_data()
+    #wines=wines.drop('type',axis=1)
+    if kfold:
+        y=wines.quality.values
+        X=wines.drop('quality',axis=1)
+        seed = 123
+        np.random.seed(seed)
+        kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+        X=StandardScaler().fit_transform(X)
+        for train, test in kfold.split(X, y):
+            model = Sequential()
+            model.add(Dense(hidden_units, input_dim=input_dim, activation='relu'))
+            model.add(Dense(12, activation='relu')) #- Hidden
+            model.add(Dense(1))
+            model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
+            model.fit(X[train], y[train], epochs=5, verbose=1) 
+            y_pred=model.predict(X[test])
+            mse_value, mae_value = model.evaluate(X[test], y[test], verbose=0)
+            print("MSE: ", mse_value)
+            print("MAE: ", mae_value)
+            print("R2 Score: ",r2_score(y[test], y_pred))
+        
+    else:
+        #- reorder the columns
+        wines=wines[['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar','chlorides', 'free sulfur dioxide', 'total sulfur dioxide', 'density','pH', 'sulphates', 'alcohol', 'type','quality']]
+        X_train, X_test, y_train, y_test = train_test_data(wines)
+        mod=Sequential()
+        mod.add(Dense(hidden_units, input_dim=input_dim, activation='relu'))
+        mod.add(Dense(12, activation='relu'))
+        mod.add(Dense(1))
+        modd=fit_model(mod,X_train,y_train,epochs=5,optimizer=optimizer,loss=loss, metrics=metrics)
+        #evaluate_model(modd,X_test,y_test)
+        y_pred=modd.predict(X_test)
+        mse_value, mae_value = modd.evaluate(X_test, y_test, verbose=0)
+        print("MSE: ", mse_value)
+        print("MAE: ", mae_value)
+        print("R2 Score: ",r2_score(y_test, y_pred))
+    return
+
+
+
