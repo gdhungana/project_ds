@@ -29,4 +29,19 @@ def plot_kmf(kmfmodel,xrange=None,label=r'$KM-estimate$'):
     plt.fill_between(sf.index,kcfdn,kcfup,color='blue',step='pre',alpha=0.3)
 
 
+def plot_naf(nafmodel,xrange=None,yrange=None,label=r'$NA-estimate$'):
+    sf=nafmodel.cumulative_hazard_
+    plt.step(sf.index,sf.iloc[:,0].values,label=label,c='g')#sf.shape
+    ncfup=nafmodel.confidence_interval_.iloc[:,0].values
+    ncfdn=nafmodel.confidence_interval_.iloc[:,1].values
+    if xrange is not None:
+        plt.xlim(xrange)
+    if yrange is not None:
+        plt.ylim(yrange)
+    plt.legend()
+    plt.xlabel(r'$Time\ [days]$')
+    plt.ylabel(r'$Cumulative\ Hazard$')
+    print(len(sf.index),len(kcfdn),len(kcfup))
+    plt.fill_between(sf.index,ncfdn,ncfup,color='green',step='pre',alpha=0.3)
+
 
